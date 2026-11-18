@@ -1,0 +1,34 @@
+FROM rust:1-bookworm AS build
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential \
+    file \
+    libayatana-appindicator3-dev \
+    librsvg2-dev \
+    libssl-dev \
+    libwebkit2gtk-4.1-dev \
+    libxdo-dev \
+    nodejs \
+    npm \
+    patchelf \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /workspace
+COPY package.json package-lock.json ./
+RUN npm ci
+COPY . .
+RUN --mount=type=cache,id=dissimulation-cargo-registry,target=/usr/local/cargo/registry \
+    --mount=type=cache,id=dissimulation-cargo-git,target=/usr/local/cargo/git \
+    --mount=type=cache,id=dissimulation-target,target=/workspace/target \
+    npm run tauri build -- --bundles deb \
+    && mkdir /bundle \
+    && cp /workspace/target/release/bundle/deb/*.deb /bundle/
+
+FROM scratch AS artifact
+COPY --from=build /bundle/ /
+
+FROM build AS test
+RUN --mount=type=cache,id=dissimulation-cargo-registry,target=/usr/local/cargo/registry \
+    --mount=type=cache,id=dissimulation-cargo-git,target=/usr/local/cargo/git \
+    --mount=type=cache,id=dissimulation-target,target=/workspace/target \
+    cargo test --workspace

@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Dissimulation
+Comment=Visualiser l'exposition réseau de cette machine
+Exec=dissimulation
+Icon=dissimulation
+Terminal=false
+Categories=Utility;System;Security;
+Keywords=network;ports;firewall;privacy;ubuntu;
+

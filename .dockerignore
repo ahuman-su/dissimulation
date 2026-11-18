@@ -1,0 +1,7 @@
+.git
+.vite
+artifacts
+dist
+node_modules
+target
+*.log

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Dissimulation",
+  "version": "0.7.0",
+  "identifier": "org.dissimulation.desktop",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:5173",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Dissimulation",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 940,
+        "minHeight": 640,
+        "resizable": true,
+        "center": true,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost; style-src 'self' 'unsafe-inline'; connect-src ipc: http://ipc.localhost"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb"],
+    "category": "Utility",
+    "shortDescription": "Visualisez votre exposition réseau",
+    "longDescription": "Dissimulation inventorie l'exposition réseau, observe les sessions TCP/UDP et applique des réglages explicitement confirmés via Polkit.",
+    "resources": {
+      "../LICENSE": "LICENSE"
+    },
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png"],
+    "linux": {
+      "deb": {
+        "depends": ["iproute2", "network-manager", "nftables", "policykit-1", "ufw"],
+        "recommends": ["tshark"],
+        "files": {
+          "/usr/share/polkit-1/actions/org.dissimulation.desktop.policy": "../packaging/org.dissimulation.desktop.policy"
+        }
+      }
+    }
+  }
+}
